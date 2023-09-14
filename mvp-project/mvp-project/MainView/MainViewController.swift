@@ -25,6 +25,16 @@ class MainViewController: UIViewController {
         return button
     }()
     
+    private lazy var tableView: UITableView = {
+        let table = UITableView()
+        table.translatesAutoresizingMaskIntoConstraints = false
+        table.delegate = self
+        table.dataSource = self
+        table.register(MainViewTableViewCell.self, forCellReuseIdentifier: "MainViewTableViewCell")
+        table.register(MainViewTableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: "MainViewTableViewHeaderFooterView")
+        return table
+    }()
+    
     init(with presenter: MainViewPresenter) {
         super.init(nibName: nil, bundle: nil)
         self.presenter = presenter
@@ -62,11 +72,45 @@ extension MainViewController {
     }
 }
 
+
+
+extension MainViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        guard let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: "MainViewTableViewHeaderFooterView") as? MainViewTableViewHeaderFooterView else {
+            return UIView()
+        }
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 10
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "MainViewTableViewCell", for: indexPath) as? MainViewTableViewCell else {
+            return UITableViewCell()
+        }
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 44
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 52
+    }
+    
+}
+
 extension MainViewController {
     
     private func addViews() {
         view.addSubview(topView)
         view.addSubview(likeButton)
+        view.addSubview(tableView)
     }
     
     
@@ -78,7 +122,12 @@ extension MainViewController {
             topView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
             likeButton.topAnchor.constraint(equalTo: topView.bottomAnchor, constant: 20),
-            likeButton.leadingAnchor.constraint(equalTo: topView.leadingAnchor)
+            likeButton.leadingAnchor.constraint(equalTo: topView.leadingAnchor),
+            
+            tableView.topAnchor.constraint(equalTo: likeButton.bottomAnchor, constant: 50),
+            tableView.leadingAnchor.constraint(equalTo: topView.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: topView.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40)
         ])
     }
 }

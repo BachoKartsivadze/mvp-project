@@ -14,6 +14,7 @@ class MainViewTableViewHeaderFooterView: UITableViewHeaderFooterView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Names"
+        label.textColor = .white
         return label
     }()
     

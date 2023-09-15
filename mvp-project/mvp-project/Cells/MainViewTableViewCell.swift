@@ -15,12 +15,13 @@ class MainViewTableViewCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "_"
+        label.textColor = .white
         return label
     }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .systemGray5
+        contentView.backgroundColor = .systemBlue.withAlphaComponent(0.7)
         addViews()
         addConstraints()
     }

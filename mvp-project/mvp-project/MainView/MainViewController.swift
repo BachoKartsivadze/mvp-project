@@ -46,7 +46,7 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .brown
+        view.backgroundColor = .systemBlue.withAlphaComponent(0.5)
         addViews()
         addConstraints()
         addTargets()
@@ -66,8 +66,8 @@ extension MainViewController {
         presenter.updateLike()
         
         UIView.animate(withDuration: 0.5, animations: {
-            self.topView.backgroundColor = self.presenter.viewColor
-            self.likeButton.setTitle(self.presenter.likeButtonTitle, for: .normal)
+            self.topView.backgroundColor = self.presenter.viewColor()
+            self.likeButton.setTitle(self.presenter.likeButtonTitle(), for: .normal)
         })
     }
 }
@@ -77,18 +77,18 @@ extension MainViewController {
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: "MainViewTableViewHeaderFooterView") as? MainViewTableViewHeaderFooterView else {
+        guard let cell = tableView.dequeueReusableHeaderFooterView(withIdentifier: presenter.headerIdentifier()) as? MainViewTableViewHeaderFooterView else {
             return UIView()
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return presenter.numberOfRow()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "MainViewTableViewCell", for: indexPath) as? MainViewTableViewCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: presenter.rowIdentifier(), for: indexPath) as? MainViewTableViewCell else {
             return UITableViewCell()
         }
         
@@ -96,11 +96,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 44
+        return presenter.cellHeight()
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 52
+        return presenter.headerHeight()
     }
     
 }

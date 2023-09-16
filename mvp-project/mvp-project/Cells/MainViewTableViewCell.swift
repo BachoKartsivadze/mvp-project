@@ -30,6 +30,17 @@ class MainViewTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configure(with nameModel: NameModel) {
+        label.text = nameModel.name
+        if nameModel.liked {
+            contentView.backgroundColor = .systemBlue
+        } else {
+            contentView.backgroundColor = .blue.withAlphaComponent(0.4)
+        }
+    }
+    
+    
+    
     
     private func addViews() {
         contentView.addSubview(label)

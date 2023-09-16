@@ -7,24 +7,45 @@
 
 import UIKit
 
+protocol MainView: AnyObject {
+    func reloadMainView()
+}
+
 protocol MainViewPresenter: AnyObject {
     func updateLike()
     func likeButtonTitle() -> String
-    func viewColor() -> UIColor
     func rowIdentifier() -> String
     func headerIdentifier() -> String
     func numberOfRow() -> Int
     func headerHeight() -> CGFloat
     func cellHeight() -> CGFloat
+    func nameForRow(in indexpath: IndexPath) -> NameModel
+    func selectRow(at indexpath: IndexPath)
+    var activeName: NameModel { get }
     
 }
 
 class MainViewPresenterImpl {
     
-    private var model = MainModel(liked: false)
+    private var names = [NameModel(name: "Alter Kacynzee"),
+                         NameModel(name: "Alfred Stieglitz"),
+                         NameModel(name: "Henry Cartier-Bresson"),
+                         NameModel(name: "Annie Leibovitz"),
+                         NameModel(name: "Anselm Adams"),
+                         NameModel(name: "Dorothea Lange"),
+                         NameModel(name: "Man Ray"),
+                         NameModel(name: "Laura Makabresku"),
+                         NameModel(name: "Bruno Barbey"),
+                         NameModel(name: "August Sander"),
+                         NameModel(name: "Bill Brandt"), NameModel(name: "-")]
+    
+    var activeNameLocation: Int
+    var activeName: NameModel
+    private weak var view: MainView?
     
     init() {
-        
+        activeNameLocation = names.count-1
+        activeName = names[activeNameLocation]
     }
 }
 
@@ -32,14 +53,24 @@ class MainViewPresenterImpl {
 extension MainViewPresenterImpl: MainViewPresenter {
     
     func likeButtonTitle() -> String {
-        return model.liked ? "Dislike" : "Like"
-    }
-    func viewColor() -> UIColor {
-        return model.liked ? .systemBlue : .white
+        return activeName.liked ? "Dislike" : "Like"
     }
     
     func updateLike() {
-        model.liked.toggle()
+        activeName.liked.toggle()
+        names[activeNameLocation].liked.toggle()
+        view?.reloadMainView()
+        
+    }
+    
+    func nameForRow(in indexpath: IndexPath) -> NameModel {
+        return names[indexpath.row]
+    }
+    
+    func selectRow(at indexpath: IndexPath) {
+        activeNameLocation = indexpath.row
+        activeName = names[activeNameLocation]
+        
     }
     
     func rowIdentifier() -> String {
@@ -51,7 +82,7 @@ extension MainViewPresenterImpl: MainViewPresenter {
     }
     
     func numberOfRow() -> Int {
-        return 10
+        return names.count
     }
     
     func headerHeight() -> CGFloat {
@@ -61,4 +92,6 @@ extension MainViewPresenterImpl: MainViewPresenter {
     func cellHeight() -> CGFloat {
         return 44
     }
+    
+    
 }

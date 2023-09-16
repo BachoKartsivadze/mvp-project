@@ -12,9 +12,8 @@ class MainViewController: UIViewController {
     var presenter: MainViewPresenter!
     
     let topView = {
-        let view = UIView()
+        let view = DisplayView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
         return view
     }()
     
@@ -32,6 +31,7 @@ class MainViewController: UIViewController {
         table.dataSource = self
         table.register(MainViewTableViewCell.self, forCellReuseIdentifier: "MainViewTableViewCell")
         table.register(MainViewTableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: "MainViewTableViewHeaderFooterView")
+        table.backgroundColor = .white
         return table
     }()
     
@@ -50,6 +50,7 @@ class MainViewController: UIViewController {
         addViews()
         addConstraints()
         addTargets()
+//        topView.configure(with: NameModel(name: "bacho kartsivadze"))
     }
 
 
@@ -66,9 +67,11 @@ extension MainViewController {
         presenter.updateLike()
         
         UIView.animate(withDuration: 0.5, animations: {
-            self.topView.backgroundColor = self.presenter.viewColor()
+            self.topView.configure(with: self.presenter.activeName)
             self.likeButton.setTitle(self.presenter.likeButtonTitle(), for: .normal)
         })
+        
+        tableView.reloadData()
     }
 }
 
@@ -91,7 +94,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: presenter.rowIdentifier(), for: indexPath) as? MainViewTableViewCell else {
             return UITableViewCell()
         }
-        
+        cell.configure(with: presenter.nameForRow(in: indexPath))
         return cell
     }
     
@@ -101,6 +104,12 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return presenter.headerHeight()
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        presenter.selectRow(at: indexPath)
+        likeButton.setTitle(presenter.likeButtonTitle(), for: .normal)
+        topView.configure(with: presenter.activeName)
     }
     
 }
@@ -129,5 +138,13 @@ extension MainViewController {
             tableView.trailingAnchor.constraint(equalTo: topView.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -40)
         ])
+    }
+}
+
+
+
+extension MainViewController: MainView {
+    func reloadMainView() {
+        viewDidLoad()
     }
 }
